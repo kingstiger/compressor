@@ -3,7 +3,7 @@ public class Main {
         String english1 = "resources/v1.txt";
         String english2 = "resources/v2.txt";
         String polish = "resources/pl1.txt";
-        String polishIT = "resources/kkkkpl IT.txt";
+        String polishIT = "resources/pl IT.txt";
 
         FileData eng1 = new FileData("eng1");
         FileData eng2 = new FileData("eng2");
