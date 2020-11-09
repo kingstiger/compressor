@@ -11,16 +11,16 @@ public class Main {
         FileData plIT = new FileData("plIT");
 
         eng1 = ReadAndCount.readAndCount(english1, eng1)
-                .calculateFrequencyAndEntropy()
+                .calculateFrequencyAndEntropyAndInformationAmount()
                 .printData();
         eng2 = ReadAndCount.readAndCount(english2, eng2)
-                .calculateFrequencyAndEntropy()
+                .calculateFrequencyAndEntropyAndInformationAmount()
                 .printData();
         pl = ReadAndCount.readAndCount(polish, pl)
-                .calculateFrequencyAndEntropy()
+                .calculateFrequencyAndEntropyAndInformationAmount()
                 .printData();
         plIT = ReadAndCount.readAndCount(polishIT, plIT)
-                .calculateFrequencyAndEntropy()
+                .calculateFrequencyAndEntropyAndInformationAmount()
                 .printData();
 
 

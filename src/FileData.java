@@ -6,6 +6,7 @@ public class FileData {
     public HashMap<Character, Integer> charactersAndTheirAmount = new HashMap<>();
     public Integer totalLength;
     public HashMap<Character, Double> charactersAndTheirFrequency = new HashMap<>();
+    public HashMap<Character, Double> charactersAndTheirAmountOfInformation = new HashMap<>();
     public Double entropy = 0.0d;
 
 
@@ -27,17 +28,22 @@ public class FileData {
         charactersAndTheirFrequency.forEach((key, value) -> System.out.print("Character: " + key + " Frequency: " + new BigDecimal(value).toPlainString() +";\n"));
 
         System.out.println("****************");
+
+        charactersAndTheirAmountOfInformation.forEach((key, value) -> System.out.print("Character: " + key + " Amount of Information: " + new BigDecimal(value).toPlainString() +";\n"));
+
+        System.out.println("****************");
         System.out.println("Entropy: " + entropy);
         System.out.println("****************");
 
         return this;
     }
 
-    public FileData calculateFrequencyAndEntropy() {
+    public FileData calculateFrequencyAndEntropyAndInformationAmount() {
         charactersAndTheirAmount.forEach((key, value) -> {
             double frequency = (double) value / totalLength;
             charactersAndTheirFrequency.put(key, frequency);
             entropy -= frequency * log2(frequency);
+            charactersAndTheirAmountOfInformation.put(key, Math.log((double) 1 / frequency));
         });
         return this;
     }
