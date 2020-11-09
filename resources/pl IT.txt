@@ -1,0 +1,66 @@
+Protokół sterowania transmisją
+TCP jest protokołem działającym w trybie klient–serwer. Serwer oczekuje na nawiązanie połączenia na określonym porcie. Klient inicjuje połączenie do serwera.
+
+W przeciwieństwie do UDP, TCP gwarantuje wyższym warstwom komunikacyjnym dostarczenie wszystkich pakietów w całości, z zachowaniem kolejności i bez duplikatów. Zapewnia to wiarygodne połączenie kosztem większego narzutu w postaci nagłówka i większej liczby przesyłanych pakietów. Chociaż protokół definiuje pakiet TCP, z punktu widzenia wyższej warstwy oprogramowania dane płynące połączeniem TCP należy traktować jako ciąg oktetów. W szczególności, jednemu wywołaniu funkcji interfejsu programowania aplikacji (np. send()) nie musi odpowiadać wysłanie jednego pakietu. Dane z jednego wywołania mogą zostać podzielone na kilka pakietów lub odwrotnie – dane z kilku wywołań mogą zostać połączone i wysłane jako jeden pakiet (dzięki użyciu algorytmu Nagle'a). Również funkcje odbierające dane (recv()) w praktyce odbierają nie konkretne pakiety, ale zawartość bufora stosu TCP/IP, wypełnianego sukcesywnie danymi z przychodzących pakietów.
+Nawiązywanie połączenia
+W protokole sterowania transmisją do nawiązania połączenia między dwoma hostami stosowana jest procedura nazwana three-way handshake. W sytuacji normalnej jest rozpoczynana, gdy host A chce nawiązać połączenie z hostem B. Wygląda ona następująco:
+
+Host A wysyła do hosta B segment SYN wraz z informacją o dolnej wartości numerów sekwencyjnych używanych do numerowania segmentów wysyłanych przez host A (np. 100) a następnie przechodzi w stan SYN-SENT.
+Host B, po otrzymaniu segmentu SYN, przechodzi w stan SYN-RECEIVED i, jeżeli również chce nawiązać połączenie, wysyła hostowi A segment SYN z informacją o dolnej wartości numerów sekwencyjnych używanych do numerowania segmentów wysyłanych przez host B (np. 300) oraz segment ACK z polem numeru sekwencji ustawionym na wartość o jeden większą niż wartość pola sekwencji pierwszego segmentu SYN hosta A, czyli 101.
+Host A po odebraniu segmentów SYN i ACK od hosta B przechodzi w stan ESTABLISHED i wysyła do niego segment ACK potwierdzający odebranie segmentu SYN (numer sekwencji ustawiony na 301).
+Host B odbiera segment ACK i przechodzi w stan ESTABLISHED.
+Host A może teraz rozpocząć przesyłanie danych.
+Jeśli host odbierający połączenie nie chce lub nie może odebrać połączenia, powinien odpowiedzieć pakietem z ustawioną flagą RST (reset).
+
+Transmisja danych
+W celu weryfikacji wysyłki i odbioru TCP używa sum kontrolnych i sekwencyjnych numerów pakietów. Odbiorca potwierdza otrzymanie pakietów o określonych numerach sekwencyjnych ustawiając flagę ACK. Brakujące pakiety są retransmitowane. Host odbierający pakiety TCP defragmentuje je i porządkuje je według numerów sekwencyjnych tak, by przekazać wyższym warstwom modelu OSI pełen złożony segment.
+
+Zakończenie połączenia
+Prawidłowe zakończenie połączenia może być zainicjowane przez dowolną stronę. Polega ono na wysłaniu pakietu z ustawioną flagą FIN (finished). Pakiet taki wymaga potwierdzenia flagą ACK. Najczęściej po otrzymaniu pakietu z flagą FIN, druga strona również kończy komunikację wysyłając pakiet z flagami FIN i ACK. Pakiet taki również wymaga potwierdzenia przez przesłanie ACK.
+
+Dopuszcza się również awaryjne przerwanie połączenia poprzez przesłanie pakietu z flagą RST (reset). Pakiet taki nie wymaga potwierdzenia.
+
+Stany połączenia
+Połączenie TCP może znajdować się w jednym z następujących stanów:
+
+LISTEN
+Gotowość do przyjęcia połączenia na określonym porcie przez serwer.
+SYN-SENT
+Pierwsza faza nawiązywania połączenia przez klienta. Wysłano pakiet z flagą SYN. Oczekiwanie na pakiet SYN+ACK.
+SYN-RECEIVED
+Otrzymano pakiet SYN, wysłano SYN+ACK. Trwa oczekiwanie na ACK. Połączenie jest w połowie otwarte (ang. half-open).
+ESTABLISHED
+Połączenie zostało prawidłowo nawiązane. Prawdopodobnie trwa transmisja.
+FIN-WAIT-1
+Wysłano pakiet FIN. Dane wciąż mogą być odbierane ale wysyłanie jest już niemożliwe.
+FIN-WAIT-2
+Otrzymano potwierdzenie własnego pakietu FIN. Oczekuje na przesłanie FIN od serwera.
+CLOSE-WAIT
+Otrzymano pakiet FIN, wysłano ACK. Oczekiwanie na przesłanie własnego pakietu FIN (gdy aplikacja skończy nadawanie).
+CLOSING
+Połączenie jest zamykane.
+LAST-ACK
+Otrzymano i wysłano FIN. Trwa oczekiwanie na ostatni pakiet ACK.
+TIME-WAIT
+Oczekiwanie w celu upewnienia się, że druga strona otrzymała potwierdzenie rozłączenia. Zgodnie z RFC 793 ↓ połączenie może być w stanie TIME-WAIT najdłużej przez 4 minuty.
+CLOSED
+Połączenie jest zamknięte.
+Port nadawcy – 16-bitowy numer identyfikujący port nadawcy.
+
+Port odbiorcy – 16-bitowy numer identyfikujący port odbiorcy.
+
+Numer sekwencyjny – 32-bitowy identyfikator określający miejsce pakietu danych w pliku przed fragmentacją (dzięki niemu, można "poskładać" plik z poszczególnych pakietów).
+
+Numer potwierdzenia – 32-bitowy numer będący potwierdzeniem otrzymania pakietu przez odbiorcę, co pozwala na synchronizację nadawanie-potwierdzenie.
+
+Długość nagłówka – 4-bitowa liczba, która oznacza liczbę 32-bitowych wierszy nagłówka, co jest niezbędne przy określaniu miejsca rozpoczęcia danych. Dlatego też nagłówek może mieć tylko taką długość, która jest wielokrotnością 32 bitów.
+
+Zarezerwowane – 3-bitowy ciąg zer, zarezerwowany dla ewentualnego przyszłego użytku.
+
+Szerokość okna – 16-bitowa informacja o tym, ile danych może aktualnie przyjąć odbiorca. Wartość 0 wskazuje na oczekiwanie na segment z innym numerem tego pola. Jest to mechanizm zabezpieczający komputer odbiorcy przed zbyt dużym napływem danych.
+
+Suma kontrolna – 16-bitowa liczba, będąca wynikiem działań na bitach całego pakietu, pozwalająca na sprawdzenie tego pakietu pod względem poprawności danych. Obliczana jest z całego nagłówka TCP z wyzerowanymi polami sumy kontrolnej oraz ostatnich ośmiu pól nagłówka IP stanowiących adresy nadawcy i odbiorcy pakietu.
+
+Wskaźnik priorytetu – 16 bitów, jeżeli flaga URG jest włączona, informuje o ważności pakietu.
+
+Opcje – czyli ewentualne dodatkowe informacje i polecenia.
