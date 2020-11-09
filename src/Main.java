@@ -1,9 +1,9 @@
 public class Main {
     public static void main(String[] args) {
-        String english1 = "E:\\Java projects\\compressor\\resources\\v1.txt";
-        String english2 = "E:\\Java projects\\compressor\\resources\\v2.txt";
-        String polish = "E:\\Java projects\\compressor\\resources\\pl1.txt";
-        String polishIT = "E:\\Java projects\\compressor\\resources\\pl IT.txt";
+        String english1 = "resources/v1.txt";
+        String english2 = "resources/v2.txt";
+        String polish = "resources/pl1.txt";
+        String polishIT = "resources/kkkkpl IT.txt";
 
         FileData eng1 = new FileData("eng1");
         FileData eng2 = new FileData("eng2");
