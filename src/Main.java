@@ -23,6 +23,8 @@ public class Main {
                 .calculateFrequencyAndEntropyAndInformationAmount()
                 .printData();
 
-
+        eng1.compare(eng2).compare(pl).compare(plIT);
+        eng2.compare(pl).compare(plIT);
+        pl.compare(plIT);
     }
 }
