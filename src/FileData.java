@@ -40,7 +40,7 @@ public class FileData {
         charactersAndTheirAmount.forEach((key, value) -> {
             double frequency = (double) value / totalLength;
             charactersAndTheirFrequency.put(key, frequency);
-            entropy -= frequency * log2(frequency);
+            entropy += frequency * log2((1/frequency));
             charactersAndTheirAmountOfInformation.put(key, Math.log((double) 1 / frequency));
         });
         return this;
